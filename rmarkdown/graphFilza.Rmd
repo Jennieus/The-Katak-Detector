@@ -1,0 +1,109 @@
+
+---
+title: "graph"
+author: "Shaffilza Kamil"
+date: '2022-06-07'
+output:
+  word_document: default
+  html_document: default
+  pdf_document: default
+---
+
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+
+
+
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+
+### READ DATA ###
+```{r}    
+library(readxl)
+df <- read_excel("occurrence.xlsx")
+View(df)
+```
+
+
+
+
+
+### COUNT SPECIES ACCORDING YEAR ###
+```{r}
+library(plyr)
+library(dplyr)
+counts <- ddply(df, .(df$eventDate, df$species), nrow)
+names(counts) <- c("eventDate", "species", "Freq")
+counts
+```
+### DESCRIBE COUNT DF ###
+```{r}
+library(pastecs)
+summary_counts <- stat.desc(counts)
+summary_counts
+```
+
+### PLOT ALL SPECIES THRU ALL YEAR ###
+```{r}
+  library(ggplot2)
+
+ggplot(data = counts, aes(x = eventDate, y = Freq, color = species)) +       
+  geom_line(aes(group = species)) + geom_point()
+```
+ 
+### PLOT SPECIES ACCODING TO YEAR ###
+```{r}
+library(ggplot2)
+library (dplyr)
+
+counts %>%
+  
+  filter((species =="Litoria fallax" | species =="Crinia signifera") & year >= 2006 & year <=2021)%>%   
+  ggplot(aes(x = year, y = Freq, color = species)) +       
+  geom_line() + 
+  geom_point()
+```
+
+### PLOT ALL SPECIES WITH RANGE YEAR ###
+```{r}
+library(ggplot2)
+
+counts %>%
+ 
+  filter(year >= 2006 & year <=2021)%>%   ## FILTER HERE
+  ggplot(aes(x = year, y = Freq, color = species)) +       
+  geom_line() + 
+  geom_point()
+```
+
+###  Grouped Bar Plot ###
+```{r}
+ library(ggplot2)
+counts %>%
+  
+  filter((species =="Litoria fallax" | species =="Crinia signifera") & year >= 2006 & year <=2008)%>% ##filter here
+  ggplot(aes(x=year, y=Freq, fill=species)) + geom_bar(stat="identity", position= position_dodge()) + 
+  labs(x="Year", y="Frequency")
+
+```
+
+
+### MAPPING BASED ON LONGITUDE LATTITUDE ###
+
+
+```{r}
+library(tidyverse)
+library(sf)
+library(mapview)
+
+df %>%
+  filter((species == "Litoria fallax" | species == "Dendrobates auratus") & year >= 2006)%>%   ## FILTER HERE
+  mapview(xcol = "decimalLongitude", ycol = "decimalLatitude", zcol = "species", crs = 4269, grid = FALSE)
+```

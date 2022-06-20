@@ -1,0 +1,148 @@
+---
+title: "predicting"
+output:
+  word_document: default
+  html_document: default
+date: '2022-06-20'
+---
+
+
+### READ DATA ###
+```{r}    
+library(readxl)
+df <- read_excel("occurrence.xlsx")
+# View(df)
+```
+
+### COUNT SPECIES ACCORDING YEAR ###
+```{r}
+library(plyr)
+counts <- ddply(df, .(df$year, df$species), nrow)
+names(counts) <- c("year", "species", "Freq")
+counts <- na.omit(counts)    # delete NA
+# View(counts)
+```
+
+### COUNT NA VALUES BEFORE PROCEED ###
+```{r}
+sum(is.na(counts))
+```
+
+
+
+### PREDICTIVE PLOT ###
+```{r}
+
+# use function Generalize Linear Model (GLM) to carry out linear regression
+#Filter data by species and year. 2022 not included.
+
+# used in this code, species: Crinia signifera (1754-2021)
+
+linear_model <- glm(Freq ~ year, data = counts[counts$species == "Litoria fallax" & counts$year>= 1754 & counts$year<=2021, ])
+
+# add year that we want to predict
+predict_year<-data.frame(year=c(2021,2022,2023,2024,2025,2026,2027,2028))
+
+
+
+# create dataframe with actual and predicted values
+plot_data <- data.frame(predict_freq = predict(linear_model, newdata = predict_year),x = predict_year)
+
+# load library ggplot2
+library(ggplot2)
+
+# plot predicted values and actual values
+ggplot(plot_data, aes(x=predict_year$year, y=predict_freq )) +
+			geom_smooth(method = "lm", col = "royalblue",) +
+      geom_point() +
+      ggtitle("Prediction Plot of Species by Year") +
+      xlab("Year") + ylab("Frequency of Species") 
+
+
+
+
+```
+
+
+### PREDICTIVE BY SELECTING YEAR AND SPECIES ###
+```{r}
+linear_model <- glm(Freq ~ year, data = counts[ counts$species == "Litoria fallax"& counts$year>=1754 & counts$year<=2021, ])
+
+# add year that we want to predict
+predict_year<-data.frame(year=c(2021,2022,2023,2024,2025,2026,2027,2028))
+
+#use predict function
+plot_data <- data.frame(predict_freq = predict(linear_model, newdata = predict_year),x = predict_year)
+
+
+##print selected year and predicted score
+plot_data[plot_data$year ==2022, ]           
+                                     
+```
+
+
+
+### compute all linear model and merge into new dataset ###
+```{r}
+# add year that we want to predict
+predict_year<-data.frame(year=c(2021,2022,2023,2024,2025,2026,2027,2028))
+
+#linear model
+linear_model_AC <- glm(Freq ~ year, data = counts[ counts$species == "Agalychnis callidryas"& counts$year>=1754 & counts$year<=2021, ])
+
+linear_model_CX <- glm(Freq ~ year, data = counts[ counts$species =="Chiromantis xerampelina"& counts$year>=1754 & counts$year<=2021, ])
+
+linear_model_CS <- glm(Freq ~ year, data = counts[ counts$species == "Crinia signifera"& counts$year>=1754 & counts$year<=2021, ])
+
+linear_model_DA <- glm(Freq ~ year, data = counts[ counts$species == "Dendrobates auratus"& counts$year>=1754 & counts$year<=2021, ])
+
+linear_model_LF <- glm(Freq ~ year, data = counts[ counts$species == "Litoria fallax"& counts$year>=1754 & counts$year<=2021, ])
+
+linear_model_RA <- glm(Freq ~ year, data = counts[ counts$species == "Ranoidea australis"& counts$year>=1754 & counts$year<=2021, ])
+
+linear_model_XL <- glm(Freq ~ year, data = counts[ counts$species == "Xenopus laevis"& counts$year>=1754 & counts$year<=2021, ])
+
+
+# create dataframe with actual and predicted values
+plot_data_AC <- data.frame(predict_freq = predict(linear_model_AC, newdata = predict_year),x = predict_year, species="Agalychnis callidryas")
+
+plot_data_CX <- data.frame(predict_freq = predict(linear_model_CX, newdata = predict_year),x = predict_year, species="Chiromantis xerampelina")
+
+plot_data_CS <- data.frame(predict_freq = predict(linear_model_CS, newdata = predict_year),x = predict_year, species="Crinia signifera")
+
+plot_data_DA <- data.frame(predict_freq = predict(linear_model_DA, newdata = predict_year),x = predict_year, species="Dendrobates auratus")
+
+plot_data_LF <- data.frame(predict_freq = predict(linear_model_LF, newdata = predict_year),x = predict_year, species="Litoria fallax")
+
+plot_data_RA <- data.frame(predict_freq = predict(linear_model_RA, newdata = predict_year),x = predict_year, species="Ranoidea australis")
+
+plot_data_XL <- data.frame(predict_freq = predict(linear_model_AC, newdata = predict_year),x = predict_year, species="Xenopus laevis")
+
+
+df_merge <-rbind(plot_data_AC, plot_data_CX, plot_data_CS, plot_data_DA, plot_data_LF, plot_data_RA, plot_data_XL)
+```
+
+```{r}
+View(df_merge)
+```
+
+### Plot all prediction bye species ###
+```{r}
+ggplot(data = df_merge, aes(x=year, y=predict_freq)) + geom_line(aes(colour=species)) +
+  geom_point(alpha = 3/10) +
+  ggtitle("Prediction of Species by Year") +
+      xlab("Year") + ylab("Frequency of Species") 
+
+```
+
+### Horizontal Bar for each year ###
+```{r}
+library(ggplot2)
+
+ggplot(subset(df_merge, year==2023), aes(x=predict_freq, y=species)) + geom_line(aes(colour=year)) +
+  geom_bar(stat="identity") +
+  ggtitle("Prediction of Species by Year")+ xlab("Frequency of Species") + ylab("Species") 
+```
+
+
+

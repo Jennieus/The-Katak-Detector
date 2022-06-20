@@ -1,0 +1,350 @@
+---
+title: "Frogs visualisation in R"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+#install.packages("devtools")
+#devtools::install_github("UrbanInstitute/urbnmapr")
+```
+
+
+```{r}
+# Load Libraries
+library(sf)
+library(ggplot2)
+library(urbnmapr)
+library(ggplot2)
+library(readxl)
+library(readr)
+library(dplyr)
+```
+
+
+```{r, warning=FALSE}
+# Read file
+data <- read_excel("occurrence.xlsx")
+str(data)
+```
+
+```{r}
+# Remove null values
+data <- na.omit(data)
+```
+
+
+
+```{r}
+# Group data to count number of species
+data_temp <- data %>%
+  group_by(year, month, species) %>%
+  summarise(Count_Species = n())
+head(data_temp)
+```
+
+
+```{r}
+# Ask for starting month and year and ending month and year.
+year_1 <- readline(prompt = "Enter Starting Year : ")
+month_1 <- readline(prompt = "Enter Starting Month : ")
+
+year_2 <- readline(prompt = "Enter Ending Year : ")
+month_2 <- readline(prompt = "Enter Ending Month : ")
+
+# Filter data
+filtered <- data_temp %>%
+  filter(year >= year_1 & month >= month_1 & year <= year_2 & month <= month_2)
+
+# Plot result
+filtered %>%
+  ggplot(aes(x = year, 
+             y = Count_Species, 
+             colour = species)) + 
+  geom_line(aes(group = species)) + 
+  labs(title = "Count of Species By Year") +
+  xlab("Year") +
+  ylab("Count of Species")
+```
+
+```{r}
+# Filter original data
+filtered <- data %>%
+  filter(year >= year_1 & month >= month_1 & year <= year_2 & month <= month_2)
+```
+
+
+```{r}
+# Divide data into each species
+Litoria_fallax <- filtered %>%
+  filter(species == "Litoria fallax")
+
+Crinia_signifera <- filtered %>%
+  filter(species == "Crinia signifera")
+
+Chiromantis_xerampelina <- filtered %>%
+  filter(species == "Chiromantis xerampelina")
+
+Agalychnis_callidryas <- filtered %>%
+  filter(species == "Agalychnis callidryas")
+
+Dendrobates_auratus <- filtered %>%
+  filter(species == "Dendrobates auratus")
+
+Xenopus_laevis <- filtered %>%
+  filter(species == "Xenopus laevis")
+
+Ranoidea_australis <- filtered %>%
+  filter(species == "Ranoidea australis")
+
+Austrochaperina_pluvialis <- filtered %>%
+  filter(species == "Austrochaperina pluvialis")
+
+Crinia_glauerti <- filtered %>%
+  filter(species == "Crinia glauerti")
+```
+
+
+
+```{r, message=FALSE}
+# Plot each species
+# Convert lat/long to a sf
+data_sf <- Austrochaperina_pluvialis %>%
+  st_as_sf(coords = c("decimalLongitude", "decimalLatitude"), 
+           crs=4326)
+
+data_sf_t <- st_transform(data_sf, 
+                          crs=2163)
+# obtain state geometries
+states_sf <- get_urbn_map(map = "states", 
+                          sf = TRUE)
+
+#st_crs(states_sf)
+
+#plot locations over map
+ggplot() +
+  geom_sf(data = data_sf_t) + 
+  geom_sf(data = states_sf, fill = NA, color = "brown", size = 0.15, alpha = 0) +
+  coord_sf(datum = st_crs(2163)) +   
+  labs(fill  = "", 
+       title = "For Austrochaperina pluvialis",
+       caption='') + 
+  theme_bw() +
+  facet_wrap(~year, ncol = 3)
+
+
+########################
+# Convert lat/long to a sf
+data_sf <- Litoria_fallax %>%
+  st_as_sf(coords = c("decimalLongitude", "decimalLatitude"), 
+           crs=4326)
+
+data_sf_t <- st_transform(data_sf, 
+                          crs=2163)
+# obtain state geometries
+states_sf <- get_urbn_map(map = "states", 
+                          sf = TRUE)
+
+#st_crs(states_sf)
+
+#plot locations over map
+ggplot() +
+  geom_sf(data = data_sf_t) + 
+  geom_sf(data = states_sf, fill = NA, color = "black", size = 0.15, alpha = 0) +
+  coord_sf(datum = st_crs(2163)) +   
+  labs(fill  = "", 
+       title = "For Litoria fallax",
+       caption='') + 
+  theme_bw() +
+  facet_wrap(~year, ncol = 3)
+
+###############
+# Convert lat/long to a sf
+data_sf <- Crinia_signifera %>%
+  st_as_sf(coords = c("decimalLongitude", "decimalLatitude"), 
+           crs=4326)
+
+data_sf_t <- st_transform(data_sf, 
+                          crs=2163)
+# obtain state geometries
+states_sf <- get_urbn_map(map = "states", 
+                          sf = TRUE)
+
+#st_crs(states_sf)
+
+#plot locations over map
+ggplot() +
+  geom_sf(data = data_sf_t) + 
+  geom_sf(data = states_sf, fill = NA, color = "orange", size = 0.15, alpha = 0) +
+  coord_sf(datum = st_crs(2163)) +   
+  labs(fill  = "", 
+       title = "For Crinia signifera",
+       caption='') + 
+  theme_bw() +
+  facet_wrap(~year, ncol = 3)
+
+
+#######################
+# Convert lat/long to a sf
+data_sf <- Chiromantis_xerampelina %>%
+  st_as_sf(coords = c("decimalLongitude", "decimalLatitude"), 
+           crs=4326)
+
+data_sf_t <- st_transform(data_sf, 
+                          crs=2163)
+# obtain state geometries
+states_sf <- get_urbn_map(map = "states", 
+                          sf = TRUE)
+
+#st_crs(states_sf)
+
+#plot locations over map
+ggplot() +
+  geom_sf(data = data_sf_t) + 
+  geom_sf(data = states_sf, fill = NA, color = "cyan", size = 0.15, alpha = 0) +
+  coord_sf(datum = st_crs(2163)) +   
+  labs(fill  = "", 
+       title = "For Chiromantis xerampelina",
+       caption='') + 
+  theme_bw() +
+  facet_wrap(~year, ncol = 3)
+
+
+###################
+# Convert lat/long to a sf
+data_sf <- Agalychnis_callidryas %>%
+  st_as_sf(coords = c("decimalLongitude", "decimalLatitude"), 
+           crs=4326)
+
+data_sf_t <- st_transform(data_sf, 
+                          crs=2163)
+# obtain state geometries
+states_sf <- get_urbn_map(map = "states", 
+                          sf = TRUE)
+
+#st_crs(states_sf)
+
+#plot locations over map
+ggplot() +
+  geom_sf(data = data_sf_t) + 
+  geom_sf(data = states_sf, fill = NA, color = "purple", size = 0.15, alpha = 0) +
+  coord_sf(datum = st_crs(2163)) +   
+  labs(fill  = "", 
+       title = "For Agalychnis callidryas",
+       caption='') + 
+  theme_bw() +
+  facet_wrap(~year, ncol = 3)
+
+
+####################
+# Convert lat/long to a sf
+data_sf <- Dendrobates_auratus %>%
+  st_as_sf(coords = c("decimalLongitude", "decimalLatitude"), 
+           crs=4326)
+
+data_sf_t <- st_transform(data_sf, 
+                          crs=2163)
+# obtain state geometries
+states_sf <- get_urbn_map(map = "states", 
+                          sf = TRUE)
+
+#st_crs(states_sf)
+
+#plot locations over map
+ggplot() +
+  geom_sf(data = data_sf_t) + 
+  geom_sf(data = states_sf, fill = NA, color = "blue", size = 0.15, alpha = 0) +
+  coord_sf(datum = st_crs(2163)) +   
+  labs(fill  = "", 
+       title = "For Dendrobates auratus",
+       caption='') + 
+  theme_bw() +
+  facet_wrap(~year, ncol = 3)
+
+
+################
+# Convert lat/long to a sf
+data_sf <- Xenopus_laevis %>%
+  st_as_sf(coords = c("decimalLongitude", "decimalLatitude"), 
+           crs=4326)
+
+data_sf_t <- st_transform(data_sf, 
+                          crs=2163)
+# obtain state geometries
+states_sf <- get_urbn_map(map = "states", 
+                          sf = TRUE)
+
+#st_crs(states_sf)
+
+#plot locations over map
+ggplot() +
+  geom_sf(data = data_sf_t) + 
+  geom_sf(data = states_sf, fill = NA, color = "green", size = 0.15, alpha = 0) +
+  coord_sf(datum = st_crs(2163)) +   
+  labs(fill  = "", 
+       title = "For Xenopus laevis",
+       caption='') + 
+  theme_bw() +
+  facet_wrap(~year, ncol = 3)
+
+
+###############
+# Convert lat/long to a sf
+data_sf <- Ranoidea_australis %>%
+  st_as_sf(coords = c("decimalLongitude", "decimalLatitude"), 
+           crs=4326)
+
+data_sf_t <- st_transform(data_sf, 
+                          crs=2163)
+# obtain state geometries
+states_sf <- get_urbn_map(map = "states", 
+                          sf = TRUE)
+
+#st_crs(states_sf)
+
+#plot locations over map
+ggplot() +
+  geom_sf(data = data_sf_t) + 
+  geom_sf(data = states_sf, fill = NA, color = "red", size = 0.15, alpha = 0) +
+  coord_sf(datum = st_crs(2163)) +   
+  labs(fill  = "", 
+       title = "For Ranoidea australis",
+       caption='') + 
+  theme_bw() +
+  facet_wrap(~year, ncol = 3)
+
+###############
+# Convert lat/long to a sf
+data_sf <- Crinia_glauerti %>%
+  st_as_sf(coords = c("decimalLongitude", "decimalLatitude"), 
+           crs=4326)
+
+data_sf_t <- st_transform(data_sf, 
+                          crs=2163)
+# obtain state geometries
+states_sf <- get_urbn_map(map = "states", 
+                          sf = TRUE)
+
+#st_crs(states_sf)
+
+#plot locations over map
+ggplot() +
+  geom_sf(data = data_sf_t) + 
+  geom_sf(data = states_sf, fill = NA, color = "brown", size = 0.15, alpha = 0) +
+  coord_sf(datum = st_crs(2163)) +   
+  labs(fill  = "", 
+       title = "For Crinia Glauerti",
+       caption='') + 
+  theme_bw() +
+  facet_wrap(~year, ncol = 3)
+
+```
+
+
+
+
+  
+

@@ -1,0 +1,31 @@
+---
+title: "The Katak Detector"
+author: "Yu Yuen Hern"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+## The Katak Detector
+- A web app with a simple charts that shows the count of frog species with particular year, and shows the count of frog species over time.
+- This is developed for WQD7001 Principles of Data Science course, part of the Master of Data Science in Universiti Malaya (UM).
+- Domain of interest: Ecology, environmental and climate
+
+## Why this Project?
+- Frogs are an indicator species. This means they are a go-to for scientists wanting to find out more about the environmental health of a particular ecosystem.
+- Because they have permeable skin, frogs are very sensitive to pollutants, and because they can live on both land and in the water, they are a good indicator of the health of these two different environments.
+- Frogs are poorly served by existing species distribution models. They have very localized distributions, more restricted than suggested by a potentially suitable habitat, and therefore existing models struggle to represent their range accurately.
+- As indicators of ecological health and proxies for biological diversity, the disappearance of frogs is of great concern. Where frogs occur, we see healthy, thriving, resilient ecosystems. Where frogs have disappeared, we see ecosystems in poor health. All the 2030 Sustainable Development Goals (SDGs) are underpinned by healthy ecosystems. This means we won’t reach our goals if we don’t prevent and reverse the loss of healthy ecosystems.
+
+## Dataset
+This project uses the dataset provided by [EY's Better Working World Global Data Challenge](https://challenge.ey.com/challenges/level-1-local-frog-discovery-tool-SXnArnHsm/overview).
+
+## Initial Plan and Challenges
+- The initial plan for the first tab was a map view on the frog count across the world. However it had to be replaced with simpler bar chart due to Shiny free tier server limitation.
+- Another part we wanted to do was the prediction of frog count by species. However, prediction was not possible because we had to reduce the dataset to 2020-2021 (~2MB or ~44k rows) due to Shiny server limitation. The app crashes frequently if the dataset is more than ~5MB or ~100k rows (we tested).
+
+## The Team
+- [NURHANIE SYAKIRAH ROSNEI](https://github.com/Jennieus)
+- [YU YUEN HERN](https://github.com/yuenherny)
+- DONG XIAORAN
+- [NOR SHAFFILZA BINTI MOHD KAMIL](https://github.com/Shaffilza) 
+- AINAA SHAMSUDDIN
