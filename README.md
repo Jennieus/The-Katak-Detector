@@ -2,7 +2,7 @@
 A Shiny app and R project for UM MDatSc WQD7001 Principles of Data Science course.
 
 - [Shiny app link](https://yuenherny.shinyapps.io/thekatakdetector/)
-- Slidy link (TBD)
+- Slidy link (https://rpubs.com/Kirah/frogdetector)
 
 ## Course Info
 Name: Principles of Data Science
